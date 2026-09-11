@@ -1,0 +1,27 @@
+# dependências
+/node_modules
+/.pnp
+.pnp.*
+
+# build do Next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# variáveis de ambiente (NUNCA suba chaves de API para o GitHub)
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# sistema operacional / editor
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+.idea/
+.vscode/*
+!.vscode/extensions.json

@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* =============================================================================
+ *  Paleta e tokens do site.
+ *  Mudou uma cor aqui, mudou no site inteiro.
+ * ========================================================================== */
+@theme {
+  --color-fundo: #08090b; /* fundo da página */
+  --color-surface: #0e1013; /* cards */
+  --color-elevated: #15181d; /* cards em hover / chips */
+  --color-line: #23262d; /* bordas */
+  --color-ink: #edeef1; /* texto principal */
+  --color-muted: #9ba2ad; /* texto secundário (contraste 7.6:1 no fundo) */
+  --color-accent: #4d8dff; /* azul de destaque (contraste 6.2:1 no fundo) */
+  --color-accent-dim: #16305c;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas,
+    monospace;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* impede que o menu fixo cubra o título da seção ao rolar */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Acessibilidade: quem pediu menos movimento no sistema, recebe menos. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-fundo);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: #08090b;
+  }
+
+  /* Foco sempre visível para navegação por teclado. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Largura padrão do conteúdo, com respiro lateral garantido no celular. */
+  .container-site {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-site {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Brilho azul suave atrás do topo da página. */
+  .glow-hero {
+    position: absolute;
+    inset-inline: 0;
+    top: -10rem;
+    height: 40rem;
+    pointer-events: none;
+    background: radial-gradient(
+      55% 45% at 50% 30%,
+      color-mix(in srgb, var(--color-accent) 18%, transparent) 0%,
+      transparent 70%
+    );
+    filter: blur(20px);
+  }
+
+  /* Linha divisória que some nas pontas. */
+  .rule-fade {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-line) 15%,
+      var(--color-line) 85%,
+      transparent
+    );
+  }
+}
