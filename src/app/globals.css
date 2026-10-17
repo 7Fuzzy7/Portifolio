@@ -3,21 +3,29 @@
 /* =============================================================================
  *  Paleta e tokens do site.
  *  Mudou uma cor aqui, mudou no site inteiro.
+ *
+ *  Inspiração visual: motion.dev — preto quase puro com um toque verde,
+ *  texto em "papel" quente e um único destaque saturado.
+ *  (O azul antigo era #4d8dff, caso queira voltar.)
  * ========================================================================== */
 @theme {
-  --color-fundo: #08090b; /* fundo da página */
-  --color-surface: #0e1013; /* cards */
-  --color-elevated: #15181d; /* cards em hover / chips */
-  --color-line: #23262d; /* bordas */
-  --color-ink: #edeef1; /* texto principal */
-  --color-muted: #9ba2ad; /* texto secundário (contraste 7.6:1 no fundo) */
-  --color-accent: #4d8dff; /* azul de destaque (contraste 6.2:1 no fundo) */
-  --color-accent-dim: #16305c;
+  --color-fundo: #080908; /* fundo da página */
+  --color-surface: #0e110e; /* cards */
+  --color-elevated: #151915; /* cards em hover / chips */
+  --color-line: #262b27; /* bordas */
+  --color-ink: #edebe5; /* texto principal */
+  --color-muted: #98a099; /* texto secundário (contraste 7.4:1 no fundo) */
+  --color-accent: #ffba1d; /* âmbar de destaque (contraste 12:1 no fundo) */
+  --color-accent-dim: #3b2a05;
+  --color-brasa: #ff7a1a; /* laranja da esfera de partículas */
+}
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Code", Consolas,
-    monospace;
+/* Fontes carregadas pelo next/font em layout.tsx. */
+@theme inline {
+  --font-sans: var(--font-tasa), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular",
+    "Cascadia Code", Consolas, monospace;
 }
 
 @layer base {
@@ -47,16 +55,18 @@
   }
 
   body {
+    @apply font-sans;
     background-color: var(--color-fundo);
     color: var(--color-ink);
-    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    /* variantes de letra da TASA Orbiter (as mesmas do motion.dev) */
+    font-feature-settings: "ss03" on, "cv05" on;
   }
 
   ::selection {
     background: var(--color-accent);
-    color: #08090b;
+    color: #080908;
   }
 
   /* Foco sempre visível para navegação por teclado. */
@@ -92,7 +102,7 @@
     }
   }
 
-  /* Brilho azul suave atrás do topo da página. */
+  /* Brilho âmbar suave atrás do topo da página. */
   .glow-hero {
     position: absolute;
     inset-inline: 0;
@@ -101,7 +111,7 @@
     pointer-events: none;
     background: radial-gradient(
       55% 45% at 50% 30%,
-      color-mix(in srgb, var(--color-accent) 18%, transparent) 0%,
+      color-mix(in srgb, var(--color-accent) 9%, transparent) 0%,
       transparent 70%
     );
     filter: blur(20px);
@@ -115,6 +125,41 @@
       transparent,
       var(--color-line) 15%,
       var(--color-line) 85%,
+      transparent
+    );
+  }
+
+  /* Borda que acende onde o mouse está (usada pelo CardComLuz). */
+  .card-luz-borda {
+    position: absolute;
+    inset: -1px; /* cobre a borda de 1px do card */
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Bordas que somem nas pontas da faixa de tecnologias. */
+  .mascara-faixa {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 12%,
+      #000 88%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 12%,
+      #000 88%,
       transparent
     );
   }

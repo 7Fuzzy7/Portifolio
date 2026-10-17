@@ -1,18 +1,19 @@
 import Section from "./Section";
 import Reveal from "./Reveal";
+import CardComLuz from "./CardComLuz";
+import { LinhaDoTempo, Marcador } from "./LinhaDoTempo";
 import { experiencia } from "@/data/content";
 
 export default function Experiencia() {
   return (
     <Section
       id="experiencia"
-      numero="04"
       titulo={experiencia.titulo}
       subtitulo={experiencia.subtitulo}
     >
       <div className="grid gap-14 lg:grid-cols-[1.6fr_1fr] lg:gap-16">
         {/* Linha do tempo */}
-        <ol>
+        <LinhaDoTempo>
           {experiencia.cargos.map((cargo, i) => {
             const atual = cargo.ate.toLowerCase() === "atual";
             return (
@@ -20,17 +21,7 @@ export default function Experiencia() {
                 key={`${cargo.empresa}-${cargo.de}`}
                 className="relative border-l border-line pb-12 pl-7 last:pb-0 md:pl-9"
               >
-                {/* Marcador centralizado na linha */}
-                <span
-                  aria-hidden="true"
-                  className={`absolute -left-[6.5px] top-1.5 h-3 w-3 rounded-full ${
-                    atual ? "bg-accent" : "bg-line"
-                  }`}
-                >
-                  {atual && (
-                    <span className="absolute inset-0 animate-ping rounded-full bg-accent/60" />
-                  )}
-                </span>
+                <Marcador atual={atual} />
 
                 <Reveal delay={i * 0.06}>
                   <p className="font-mono text-xs tracking-wide text-accent">
@@ -52,12 +43,12 @@ export default function Experiencia() {
               </li>
             );
           })}
-        </ol>
+        </LinhaDoTempo>
 
         {/* Formação e certificações */}
         <div className="space-y-8">
           <Reveal>
-            <div className="rounded-2xl border border-line bg-surface p-6">
+            <CardComLuz className="rounded-2xl border border-line bg-surface p-6">
               <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
                 Formação
               </h3>
@@ -73,11 +64,11 @@ export default function Experiencia() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </CardComLuz>
           </Reveal>
 
           <Reveal delay={0.08}>
-            <div className="rounded-2xl border border-line bg-surface p-6">
+            <CardComLuz className="rounded-2xl border border-line bg-surface p-6">
               <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
                 Certificações
               </h3>
@@ -92,7 +83,7 @@ export default function Experiencia() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </CardComLuz>
           </Reveal>
         </div>
       </div>

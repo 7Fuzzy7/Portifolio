@@ -5,7 +5,7 @@ import { sobre, pessoal } from "@/data/content";
 
 export default function Sobre() {
   return (
-    <Section id="sobre" numero="01" titulo={sobre.titulo}>
+    <Section id="sobre" titulo={sobre.titulo}>
       <div className="grid gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
         <div className="order-2 lg:order-1">
           <div className="space-y-5">

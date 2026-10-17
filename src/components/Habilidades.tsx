@@ -1,19 +1,19 @@
 import Section from "./Section";
 import Reveal from "./Reveal";
+import CardComLuz from "./CardComLuz";
 import { habilidades } from "@/data/content";
 
 export default function Habilidades() {
   return (
     <Section
       id="habilidades"
-      numero="02"
       titulo={habilidades.titulo}
       subtitulo={habilidades.subtitulo}
     >
       <div className="grid gap-5 sm:grid-cols-2">
         {habilidades.grupos.map((grupo, i) => (
           <Reveal key={grupo.titulo} delay={i * 0.08}>
-            <div className="h-full rounded-2xl border border-line bg-surface p-6 transition-colors duration-300 hover:border-accent/40 md:p-7">
+            <CardComLuz className="h-full rounded-2xl border border-line bg-surface p-6 md:p-7">
               <h3 className="text-lg font-semibold tracking-tight">
                 {grupo.titulo}
               </h3>
@@ -28,7 +28,7 @@ export default function Habilidades() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </CardComLuz>
           </Reveal>
         ))}
       </div>

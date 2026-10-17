@@ -1,10 +1,11 @@
 import Section from "./Section";
 import Reveal from "./Reveal";
+import CopiarEmail from "./CopiarEmail";
 import { contato, pessoal } from "@/data/content";
 
 export default function Contato() {
   return (
-    <Section id="contato" numero="05" titulo={contato.titulo}>
+    <Section id="contato" titulo={contato.titulo}>
       <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <Reveal>
           <div>
@@ -17,26 +18,29 @@ export default function Contato() {
               {contato.texto}
             </p>
 
-            <a
-              href={`mailto:${pessoal.email}`}
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-fundo transition-transform duration-200 hover:-translate-y-0.5"
-            >
-              Enviar e-mail
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <a
+                href={`mailto:${pessoal.email}`}
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-fundo transition-transform duration-200 hover:-translate-y-0.5"
               >
-                <path d="M5 12h14" />
-                <path d="m13 6 6 6-6 6" />
-              </svg>
-            </a>
+                Enviar e-mail
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m13 6 6 6-6 6" />
+                </svg>
+              </a>
+              <CopiarEmail email={pessoal.email} />
+            </div>
           </div>
         </Reveal>
 

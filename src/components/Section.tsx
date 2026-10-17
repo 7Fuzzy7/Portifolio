@@ -1,22 +1,16 @@
 import type { ReactNode } from "react";
 import Reveal from "./Reveal";
+import TituloAnimado from "./TituloAnimado";
 
 type Props = {
   id: string;
-  numero: string;
   titulo: string;
   subtitulo?: string;
   children: ReactNode;
 };
 
-/** Casca padrão das seções: número, título grande e conteúdo. */
-export default function Section({
-  id,
-  numero,
-  titulo,
-  subtitulo,
-  children,
-}: Props) {
+/** Casca padrão das seções: título grande, subtítulo opcional e conteúdo. */
+export default function Section({ id, titulo, subtitulo, children }: Props) {
   return (
     <section
       id={id}
@@ -25,15 +19,12 @@ export default function Section({
     >
       <Reveal>
         <div className="mb-10 md:mb-14">
-          <span className="font-mono text-xs tracking-widest text-accent">
-            {numero}
-          </span>
-          <h2
+          <TituloAnimado
             id={`${id}-titulo`}
-            className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl"
+            className="text-4xl font-semibold tracking-tight md:text-6xl"
           >
             {titulo}
-          </h2>
+          </TituloAnimado>
           {subtitulo && (
             <p className="mt-3 max-w-xl text-base text-muted md:text-lg">
               {subtitulo}

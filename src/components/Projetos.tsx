@@ -1,5 +1,6 @@
 import Section from "./Section";
 import Reveal from "./Reveal";
+import CardComLuz from "./CardComLuz";
 import { projetos, type Projeto } from "@/data/content";
 
 function Bloco({
@@ -27,8 +28,9 @@ function Bloco({
 
 function Card({ projeto }: { projeto: Projeto }) {
   return (
-    <article
-      className="group flex h-full flex-col rounded-2xl border border-line bg-surface p-6 transition-colors duration-300 hover:border-accent/40 md:p-8"
+    <CardComLuz
+      como="article"
+      className="flex h-full flex-col rounded-2xl border border-line bg-surface p-6 md:p-8"
     >
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted">
         <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-accent">
@@ -91,7 +93,7 @@ function Card({ projeto }: { projeto: Projeto }) {
           <span className="sr-only">— {projeto.titulo}</span>
         </a>
       )}
-    </article>
+    </CardComLuz>
   );
 }
 
@@ -99,7 +101,6 @@ export default function Projetos() {
   return (
     <Section
       id="projetos"
-      numero="03"
       titulo={projetos.titulo}
       subtitulo={projetos.subtitulo}
     >

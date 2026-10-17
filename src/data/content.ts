@@ -52,10 +52,9 @@ export const pessoal = {
  * 3. HERO — primeira dobra
  * -------------------------------------------------------------------------- */
 export const hero = {
-  /** Linha pequena acima do nome. */
-  sobrenome: "Portfólio",
+  /** O nome que as partículas escrevem no centro da esfera (quebra em 2 linhas sozinho). */
   titulo: pessoal.nome,
-  /** A frase grande. Quebra de linha automática — escreva corrido. */
+  /** A frase de destaque, ao lado da esfera. Quebra de linha automática — escreva corrido. */
   posicionamento:
     "Mantenho a infraestrutura de pé durante o dia e construo visão computacional, IoT e dados no resto do tempo.",
   /** Exatamente 3 palavras-chave funcionam melhor no layout. */

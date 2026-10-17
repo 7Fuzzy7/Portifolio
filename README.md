@@ -1,6 +1,6 @@
 # Portfólio — Pedro Martins de Almeida
 
-Site pessoal em **Next.js (App Router) + TypeScript + Tailwind CSS + Framer Motion**, pronto para publicar na Vercel.
+Site pessoal em **Next.js (App Router) + TypeScript + Tailwind CSS + [Motion](https://motion.dev)** (antigo Framer Motion) com uma esfera de partículas em WebGL, pronto para publicar na Vercel.
 
 Todo o conteúdo do site fica em **um único arquivo**: `src/data/content.ts`.
 Para mudar qualquer texto, número, projeto ou link, edite só esse arquivo — nunca precisa mexer nos componentes.
@@ -35,7 +35,7 @@ Abra `src/data/content.ts`. Ele está dividido em blocos comentados:
 | --- | --- |
 | `site` | Título, descrição e URL usados no Google e no card de link |
 | `pessoal` | Nome, cargo, cidade, e-mail, LinkedIn, GitHub, foto |
-| `hero` | Primeira dobra: frase grande, 3 palavras-chave e os dois botões |
+| `hero` | Primeira dobra: o nome (`titulo`, escrito com partículas dentro da esfera), a frase de destaque, 3 palavras-chave e os dois botões |
 | `sobre` | Parágrafos do "Sobre" e os 3 destaques em caixinha |
 | `habilidades` | Os 4 grupos e os itens de cada um |
 | `projetos` | Os cards (problema, solução, resultado, stack, link) |
@@ -49,7 +49,7 @@ Algumas coisas que valem a pena ajustar depois:
 - **Link dos repositórios**: em cada projeto, preencha `link: "https://github.com/7Fuzzy7/..."`. Se ficar vazio (`""`), o botão simplesmente não aparece.
 - **Números reais nos projetos**: o campo `resultado` é o que mais chama atenção de recrutador. Quando tiver métrica (precisão do modelo, tempo economizado, volume processado), coloque lá.
 - **Projeto em destaque**: `destaque: true` faz o card ocupar a linha inteira. Hoje é o AntVision.
-- **Cargo atual**: `ate: "atual"` deixa a bolinha azul pulsando na linha do tempo.
+- **Cargo atual**: `ate: "atual"` deixa a bolinha âmbar pulsando na linha do tempo.
 
 ### Trocar a foto
 
@@ -59,7 +59,39 @@ Para tirar a foto do site, deixe `foto: ""` no bloco `pessoal`.
 ### Trocar as cores
 
 Estão em `src/app/globals.css`, no bloco `@theme`. Mudou ali, mudou no site inteiro.
-O azul de destaque é `--color-accent`.
+O âmbar de destaque é `--color-accent` (o azul antigo era `#4d8dff`).
+As fontes (TASA Orbiter e Geist Mono) são carregadas em `src/app/layout.tsx`.
+
+A cor da esfera de partículas **não** vem do CSS: ela está nos shaders de `src/lib/orb.ts`
+(variáveis `cDeep`, `cMid`, `cHot` e `cWhite`, valores de 0 a 1 em RGB).
+
+---
+
+## 2.1 Efeitos de movimento
+
+Tudo é feito com o [Motion](https://motion.dev) (`import ... from "motion/react"`). Onde está cada coisa:
+
+| Efeito | Arquivo | O que dá para ajustar |
+| --- | --- | --- |
+| Esfera de partículas (Hero) com o **nome escrito por partículas** no centro | `components/Orb.tsx` + `lib/orb.ts` + `lib/orb-texto.ts` | `PRESETS.hero` em `Orb.tsx`: nº de partículas, duração da chegada e o `texto` (`largura` do nome em raios da esfera, `alvo` = nº de pontos). O texto vem de `hero.titulo` no `content.ts` e usa a mesma fonte do site. |
+| Esfera "assistente" no `/chat` | `components/ChatAssistente.tsx` | Fica agitada enquanto "pensa" e solta uma onda de luz ao responder (`ESTADOS` em `Orb.tsx`) |
+| Faixa de tecnologias | `components/FaixaTecnologias.tsx` | `velocidade` (px/s); acelera e inverte com a rolagem |
+| Brilho que segue o mouse nos cards | `components/CardComLuz.tsx` | Tamanho/cor do brilho |
+| Linha do tempo que se desenha ao rolar | `components/LinhaDoTempo.tsx` | Início/fim da animação (`offset`) |
+| Menu: texto que rola e sublinhado que desliza | `components/Nav.tsx` + `TextoRolante.tsx` | Mola do sublinhado (`stiffness`/`damping`) |
+| Botão "copiar e-mail" | `components/CopiarEmail.tsx` | — |
+
+**Desempenho:** a esfera é carregada à parte (≈12 kB), só roda enquanto está na tela, usa menos
+partículas no celular e reduz a qualidade sozinha se o aparelho engasgar (os pontos do nome nunca
+são cortados).
+
+**Acessibilidade e plano B:** o nome continua existindo como `<h1>` de verdade (leitores de tela e
+Google leem normalmente); ele só fica invisível enquanto as partículas desenham o nome. Se o
+aparelho não tiver WebGL, ou a esfera demorar mais de 8 s, o `<h1>` aparece em texto normal.
+Quem ativou "reduzir movimento" no sistema operacional recebe a esfera parada, com o nome já
+escrito, e animações só de fade (o `MotionProvider` cuida disso). ⚠️ Não use `useReducedMotion()` para trocar
+o HTML renderizado de um componente: o servidor não conhece a preferência, o HTML fica diferente
+entre servidor e navegador e o conteúdo some. Use o hook só dentro de eventos/efeitos.
 
 ---
 

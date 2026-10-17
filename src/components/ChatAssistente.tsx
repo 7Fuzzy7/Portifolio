@@ -1,9 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { AnimatePresence, motion } from "motion/react";
 import { assistente, pessoal } from "@/data/content";
 import { responder } from "@/lib/assistente";
+import { SUAVE } from "@/lib/animacao";
+
+// A esfera (WebGL) vem em um pedaço de JS separado, só no navegador.
+const Orb = dynamic(() => import("./Orb"), { ssr: false });
 
 type Mensagem = { de: "voce" | "assistente"; texto: string };
 
@@ -13,6 +19,8 @@ export default function ChatAssistente() {
   ]);
   const [texto, setTexto] = useState("");
   const [pensando, setPensando] = useState(false);
+  // Sobe a cada resposta recebida: faz a esfera soltar uma onda de luz.
+  const [respostas, setRespostas] = useState(0);
   const fimDaLista = useRef<HTMLDivElement>(null);
   const campo = useRef<HTMLInputElement>(null);
 
@@ -58,6 +66,7 @@ export default function ChatAssistente() {
       ]);
     } finally {
       setPensando(false);
+      setRespostas((n) => n + 1);
       campo.current?.focus();
     }
   }
@@ -88,12 +97,23 @@ export default function ChatAssistente() {
             </svg>
             VOLTAR AO PORTFÓLIO
           </Link>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-            {assistente.titulo}
-          </h1>
-          <p className="mt-3 text-base text-muted md:text-lg">
-            {assistente.subtitulo}
-          </p>
+          <div className="mt-4 flex items-center justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">
+                {assistente.titulo}
+              </h1>
+              <p className="mt-3 text-base text-muted md:text-lg">
+                {assistente.subtitulo}
+              </p>
+            </div>
+            {/* O "rosto" do assistente: agita enquanto pensa e solta uma onda de luz ao responder. */}
+            <Orb
+              variante="avatar"
+              estado={pensando ? "pensando" : "ocioso"}
+              pulso={respostas}
+              className="-my-3 h-28 w-28 shrink-0 md:-my-4 md:h-44 md:w-44"
+            />
+          </div>
           <div className="rule-fade mt-8" />
         </header>
 
@@ -105,8 +125,11 @@ export default function ChatAssistente() {
           className="flex-1 space-y-4 py-8"
         >
           {mensagens.map((m, i) => (
-            <div
+            <motion.div
               key={i}
+              initial={{ opacity: 0, y: 14, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.45, ease: SUAVE }}
               className={`flex ${m.de === "voce" ? "justify-end" : "justify-start"}`}
             >
               <div
@@ -121,24 +144,33 @@ export default function ChatAssistente() {
                 </span>
                 {m.texto}
               </div>
-            </div>
+            </motion.div>
           ))}
 
-          {pensando && (
-            <div className="flex justify-start">
-              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-surface px-4 py-4">
-                <span className="sr-only">Escrevendo a resposta…</span>
-                {[0, 1, 2].map((n) => (
-                  <span
-                    key={n}
-                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent"
-                    style={{ animationDelay: `${n * 0.15}s` }}
-                    aria-hidden="true"
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {pensando && (
+              <motion.div
+                key="pensando"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.25 }}
+                className="flex justify-start"
+              >
+                <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-surface px-4 py-4">
+                  <span className="sr-only">Escrevendo a resposta…</span>
+                  {[0, 1, 2].map((n) => (
+                    <span
+                      key={n}
+                      className="h-1.5 w-1.5 animate-bounce rounded-full bg-accent"
+                      style={{ animationDelay: `${n * 0.15}s` }}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div ref={fimDaLista} />
         </div>

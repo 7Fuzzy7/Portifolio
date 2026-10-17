@@ -3,13 +3,38 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { navegacao, pessoal } from "@/data/content";
+import { SUAVE } from "@/lib/animacao";
+import TextoRolante from "./TextoRolante";
+
+// O Link do Next com as props do Motion (hover, variantes…).
+const MotionLink = motion.create(Link);
 
 export default function Nav() {
   const pathname = usePathname();
   const naHome = pathname === "/";
   const [rolou, setRolou] = useState(false);
   const [aberto, setAberto] = useState(false);
+  const [ativo, setAtivo] = useState("");
+
+  // Descobre qual seção está na tela para destacar o link correspondente.
+  useEffect(() => {
+    if (!naHome) return;
+    const secoes = navegacao
+      .map((item) => document.querySelector(item.href))
+      .filter((el): el is Element => el !== null);
+    const observer = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          if (e.isIntersecting) setAtivo(`#${e.target.id}`);
+        }
+      },
+      { rootMargin: "-40% 0px -55% 0px" },
+    );
+    secoes.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [naHome]);
 
   // Fundo do menu só aparece depois de rolar um pouco.
   useEffect(() => {
@@ -55,21 +80,38 @@ export default function Nav() {
         <ul className="hidden items-center gap-7 md:flex">
           {navegacao.map((item) => (
             <li key={item.href}>
-              <a
+              <motion.a
                 href={link(item.href)}
-                className="text-sm text-muted transition-colors hover:text-ink"
+                initial="repouso"
+                whileHover="hover"
+                whileFocus="hover"
+                className={`relative block px-1 py-1 text-sm transition-colors hover:text-ink ${
+                  naHome && ativo === item.href ? "text-ink" : "text-muted"
+                }`}
               >
-                {item.rotulo}
-              </a>
+                <TextoRolante>{item.rotulo}</TextoRolante>
+                {naHome && ativo === item.href && (
+                  <motion.span
+                    layoutId="nav-indicador"
+                    data-nav-indicador=""
+                    aria-hidden="true"
+                    className="absolute inset-x-0 -bottom-1 h-px bg-accent"
+                    transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                  />
+                )}
+              </motion.a>
             </li>
           ))}
           <li>
-            <Link
+            <MotionLink
               href="/chat"
-              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
+              initial="repouso"
+              whileHover="hover"
+              whileFocus="hover"
+              className="block rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent transition-colors hover:bg-accent/20"
             >
-              Assistente
-            </Link>
+              <TextoRolante>Assistente</TextoRolante>
+            </MotionLink>
           </li>
         </ul>
 
@@ -78,7 +120,7 @@ export default function Nav() {
           type="button"
           onClick={() => setAberto((v) => !v)}
           aria-expanded={aberto}
-          aria-controls="menu-mobile"
+          aria-controls={aberto ? "menu-mobile" : undefined}
           aria-label={aberto ? "Fechar menu" : "Abrir menu"}
           className="flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink md:hidden"
         >
@@ -108,35 +150,56 @@ export default function Nav() {
         </button>
       </nav>
 
-      {/* Menu do celular */}
-      <div
-        id="menu-mobile"
-        hidden={!aberto}
-        className="border-t border-line bg-fundo md:hidden"
-      >
-        <ul className="container-site flex flex-col py-2">
-          {navegacao.map((item) => (
-            <li key={item.href}>
-              <a
-                href={link(item.href)}
-                onClick={() => setAberto(false)}
-                className="block py-3 text-base text-muted transition-colors hover:text-ink"
-              >
-                {item.rotulo}
-              </a>
-            </li>
-          ))}
-          <li>
-            <Link
-              href="/chat"
-              onClick={() => setAberto(false)}
-              className="block py-3 text-base font-medium text-accent"
-            >
-              Assistente
-            </Link>
-          </li>
-        </ul>
-      </div>
+      {/* Menu do celular: abre/fecha deslizando, com os links entrando em sequência. */}
+      <AnimatePresence initial={false}>
+        {aberto && (
+          <motion.div
+            id="menu-mobile"
+            key="menu-mobile"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.35, ease: SUAVE }}
+            className="overflow-hidden border-t border-line bg-fundo md:hidden"
+          >
+            <ul className="container-site flex flex-col py-2">
+              {[
+                ...navegacao.map((item) => ({
+                  rotulo: item.rotulo,
+                  href: link(item.href),
+                  pagina: false,
+                })),
+                { rotulo: "Assistente", href: "/chat", pagina: true },
+              ].map((item, i) => (
+                <motion.li
+                  key={item.href}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.35, delay: 0.05 + i * 0.045, ease: SUAVE }}
+                >
+                  {item.pagina ? (
+                    <Link
+                      href={item.href}
+                      onClick={() => setAberto(false)}
+                      className="block py-3 text-base font-medium text-accent"
+                    >
+                      {item.rotulo}
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.href}
+                      onClick={() => setAberto(false)}
+                      className="block py-3 text-base text-muted transition-colors hover:text-ink"
+                    >
+                      {item.rotulo}
+                    </a>
+                  )}
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
