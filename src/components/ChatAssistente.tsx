@@ -11,7 +11,15 @@ import { SUAVE } from "@/lib/animacao";
 // A esfera (WebGL) vem em um pedaço de JS separado, só no navegador.
 const Orb = dynamic(() => import("./Orb"), { ssr: false });
 
-type Mensagem = { de: "voce" | "assistente"; texto: string };
+type Mensagem = { de: "voce" | "assistente"; texto: string; relacionadas?: string[] };
+
+// Primeira pergunta de cada resposta, agrupada por tema: vira os botões do painel.
+const perguntasPorTema = assistente.categorias.map((c) => ({
+  ...c,
+  perguntas: assistente.baseDeConhecimento
+    .filter((r) => r.categoria === c.id)
+    .map((r) => r.perguntas[0]),
+}));
 
 export default function ChatAssistente() {
   const [mensagens, setMensagens] = useState<Mensagem[]>([
@@ -19,6 +27,8 @@ export default function ChatAssistente() {
   ]);
   const [texto, setTexto] = useState("");
   const [pensando, setPensando] = useState(false);
+  const [tema, setTema] = useState(assistente.categorias[0].id);
+  const [temasAbertos, setTemasAbertos] = useState(true);
   // Sobe a cada resposta recebida: faz a esfera soltar uma onda de luz.
   const [respostas, setRespostas] = useState(0);
   const fimDaLista = useRef<HTMLDivElement>(null);
@@ -35,6 +45,7 @@ export default function ChatAssistente() {
 
     setMensagens((atual) => [...atual, { de: "voce", texto: limpa }]);
     setTexto("");
+    setTemasAbertos(false);
     setPensando(true);
 
     try {
@@ -46,23 +57,29 @@ export default function ChatAssistente() {
           body: JSON.stringify({ pergunta: limpa }),
         });
         const dados = await r.json();
+        const local = responder(limpa);
         const resposta =
           typeof dados?.resposta === "string" && dados.resposta.trim()
             ? dados.resposta
-            : assistente.semResposta;
-        setMensagens((atual) => [...atual, { de: "assistente", texto: resposta }]);
-      } else {
-        // Modo offline: respostas prontas do content.ts. Custo zero.
-        await new Promise((resolve) => setTimeout(resolve, 420));
+            : local.resposta;
         setMensagens((atual) => [
           ...atual,
-          { de: "assistente", texto: responder(limpa) },
+          { de: "assistente", texto: resposta, relacionadas: local.relacionadas },
+        ]);
+      } else {
+        // Modo offline: respostas prontas de perguntas.ts. Custo zero.
+        await new Promise((resolve) => setTimeout(resolve, 420));
+        const r = responder(limpa);
+        setMensagens((atual) => [
+          ...atual,
+          { de: "assistente", texto: r.resposta, relacionadas: r.relacionadas },
         ]);
       }
     } catch {
+      const r = responder(limpa);
       setMensagens((atual) => [
         ...atual,
-        { de: "assistente", texto: assistente.semResposta },
+        { de: "assistente", texto: r.resposta, relacionadas: r.relacionadas },
       ]);
     } finally {
       setPensando(false);
@@ -71,7 +88,8 @@ export default function ChatAssistente() {
     }
   }
 
-  const mostrarSugestoes = mensagens.length <= 3;
+  const ultima = mensagens.length - 1;
+  const temaAtual = perguntasPorTema.find((t) => t.id === tema) ?? perguntasPorTema[0];
 
   return (
     <div className="container-site">
@@ -143,6 +161,26 @@ export default function ChatAssistente() {
                   {m.de === "voce" ? "Você disse: " : "Assistente respondeu: "}
                 </span>
                 {m.texto}
+                {m.de === "assistente" && i === ultima && !pensando && m.relacionadas && m.relacionadas.length > 0 && (
+                  <div className="mt-3 border-t border-line pt-3">
+                    <p className="mb-2 font-mono text-[0.68rem] uppercase tracking-widest text-muted">
+                      Veja também
+                    </p>
+                    <ul className="flex flex-wrap gap-2">
+                      {m.relacionadas.map((p) => (
+                        <li key={p}>
+                          <button
+                            type="button"
+                            onClick={() => enviar(p)}
+                            className="rounded-full border border-line px-3 py-1.5 text-left text-xs text-muted transition-colors hover:border-accent/50 hover:text-accent md:text-sm"
+                          >
+                            {p}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </motion.div>
           ))}
@@ -176,27 +214,54 @@ export default function ChatAssistente() {
         </div>
 
         {/* Perguntas sugeridas */}
-        {mostrarSugestoes && (
-          <div className="mb-4">
-            <p className="mb-3 font-mono text-[0.68rem] uppercase tracking-widest text-muted">
-              Sugestões
-            </p>
-            <ul className="flex flex-wrap gap-2">
-              {assistente.sugestoes.map((s) => (
-                <li key={s}>
-                  <button
-                    type="button"
-                    onClick={() => enviar(s)}
-                    disabled={pensando}
-                    className="rounded-full border border-line bg-surface px-4 py-2 text-left text-sm text-muted transition-colors hover:border-accent/50 hover:text-accent disabled:opacity-50"
-                  >
-                    {s}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => setTemasAbertos((a) => !a)}
+            aria-expanded={temasAbertos}
+            aria-controls="painel-temas"
+            className="mb-3 font-mono text-[0.68rem] uppercase tracking-widest text-muted transition-colors hover:text-accent"
+          >
+            Temas {temasAbertos ? "▾" : "▸"}
+          </button>
+          {temasAbertos && (
+            <div id="painel-temas">
+              <ul className="mb-3 flex flex-wrap gap-2" role="tablist" aria-label="Temas">
+                {perguntasPorTema.map((t) => (
+                  <li key={t.id}>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={t.id === tema}
+                      onClick={() => setTema(t.id)}
+                      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                        t.id === tema
+                          ? "border-accent/60 bg-accent/10 text-accent"
+                          : "border-line text-muted hover:border-accent/40 hover:text-ink"
+                      }`}
+                    >
+                      {t.rotulo}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <ul className="flex flex-wrap gap-2">
+                {temaAtual.perguntas.map((s) => (
+                  <li key={s}>
+                    <button
+                      type="button"
+                      onClick={() => enviar(s)}
+                      disabled={pensando}
+                      className="rounded-full border border-line bg-surface px-4 py-2 text-left text-sm text-muted transition-colors hover:border-accent/50 hover:text-accent disabled:opacity-50"
+                    >
+                      {s}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
 
         {/* Campo de pergunta */}
         <form
@@ -230,9 +295,9 @@ export default function ChatAssistente() {
 
         <p className="mt-4 text-center text-xs text-muted">
           {assistente.modo === "offline"
-            ? "Respostas pré-definidas a partir do conteúdo deste portfólio."
-            : "Respostas geradas por IA a partir do conteúdo deste portfólio."}{" "}
-          Para falar comigo de verdade:{" "}
+            ? "Estas respostas foram escritas por mim, a partir do que está neste portfólio."
+            : "Respostas geradas por IA a partir do que está neste portfólio."}{" "}
+          Se a sua dúvida não estiver aqui, fale comigo:{" "}
           <a
             href={`mailto:${pessoal.email}`}
             className="text-accent transition-opacity hover:opacity-80"

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, TASA_Orbiter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -8,14 +8,18 @@ import MotionProvider from "@/components/MotionProvider";
 import { site, pessoal, experiencia, habilidades } from "@/data/content";
 
 // Mesmo par de fontes do motion.dev: TASA Orbiter (texto) + Geist Mono (rótulos).
-const fonteTexto = TASA_Orbiter({
-  subsets: ["latin"],
+// Os arquivos ficam em ./fonts (veja o LEIA-ME de lá): assim o site não depende
+// de baixar nada do Google na hora de compilar.
+const fonteTexto = localFont({
+  src: "./fonts/TASAOrbiter-latin.woff2",
   variable: "--font-tasa",
+  weight: "400 800",
   display: "swap",
 });
-const fonteMono = Geist_Mono({
-  subsets: ["latin"],
+const fonteMono = localFont({
+  src: "./fonts/GeistMono-latin.woff2",
   variable: "--font-geist-mono",
+  weight: "100 900",
   display: "swap",
 });
 
@@ -23,7 +27,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
     default: site.titulo,
-    template: `%s · ${pessoal.nomeCurto}`,
+    template: `%s | ${pessoal.nomeCurto}`,
   },
   description: site.descricao,
   keywords: site.palavrasChaveSEO,
@@ -34,7 +38,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     url: site.url,
-    siteName: `${pessoal.nome} — Portfólio`,
+    siteName: `Portfólio de ${pessoal.nome}`,
     title: site.titulo,
     description: site.descricao,
   },

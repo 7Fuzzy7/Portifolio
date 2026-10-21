@@ -90,7 +90,7 @@ function Card({ projeto }: { projeto: Projeto }) {
             <path d="M7 17 17 7" />
             <path d="M8 7h9v9" />
           </svg>
-          <span className="sr-only">— {projeto.titulo}</span>
+          <span className="sr-only"> de {projeto.titulo}</span>
         </a>
       )}
     </CardComLuz>

@@ -25,7 +25,7 @@ export default function Experiencia() {
 
                 <Reveal delay={i * 0.06}>
                   <p className="font-mono text-xs tracking-wide text-accent">
-                    {cargo.de} — {atual ? "atual" : cargo.ate}
+                    {cargo.de} {atual ? "até hoje" : `a ${cargo.ate}`}
                   </p>
                   <h3 className="mt-2 text-xl font-semibold tracking-tight md:text-2xl">
                     {cargo.cargo}
@@ -33,7 +33,7 @@ export default function Experiencia() {
                   <p className="mt-1 text-sm text-ink">
                     {cargo.empresa}
                     {cargo.local && (
-                      <span className="text-muted"> · {cargo.local}</span>
+                      <span className="text-muted"> em {cargo.local}</span>
                     )}
                   </p>
                   <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
@@ -59,7 +59,7 @@ export default function Experiencia() {
                       {f.curso}
                     </p>
                     <p className="mt-0.5 text-sm text-muted">
-                      {f.instituicao} · {f.periodo}
+                      {f.instituicao}, {f.periodo}
                     </p>
                   </li>
                 ))}

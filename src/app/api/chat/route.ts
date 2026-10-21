@@ -23,7 +23,9 @@ import {
   projetos,
   experiencia,
   contato,
+  assistente,
 } from "@/data/content";
+import { preencher } from "@/lib/assistente";
 
 export const runtime = "nodejs";
 
@@ -60,24 +62,29 @@ function contexto(): string {
     "",
     "FORMAÇÃO:",
     ...experiencia.formacao.map(
-      (f) => `- ${f.curso} — ${f.instituicao} (${f.periodo})`,
+      (f) => `- ${f.curso}, ${f.instituicao} (${f.periodo})`,
     ),
     "",
     "CERTIFICAÇÕES:",
     ...experiencia.certificacoes.map((c) => `- ${c}`),
     "",
     `DISPONIBILIDADE: ${contato.chamada}.`,
+    "",
+    "RESPOSTAS JÁ ESCRITAS POR " + pessoal.nomeCurto.toUpperCase() + " (use como fonte e como tom):",
+    ...assistente.baseDeConhecimento.map(
+      (r) => `P: ${r.perguntas[0]}\nR: ${preencher(r.resposta)}`,
+    ),
   ];
   return linhas.join("\n");
 }
 
-const INSTRUCOES = `Você é o assistente do portfólio de ${pessoal.nome} e responde a recrutadores e pessoas curiosas sobre a carreira dele.
+const INSTRUCOES = `Você responde como ${pessoal.nome}, no site do próprio portfólio, a recrutadores e pessoas curiosas sobre a sua carreira.
 
 Regras:
-- Responda SEMPRE em português do Brasil, em no máximo 4 frases.
-- Use apenas as informações do dossiê abaixo. Se a resposta não estiver lá, diga que não tem essa informação e sugira falar direto com o ${pessoal.nomeCurto} pelo e-mail ${pessoal.email}.
-- Nunca invente empregos, datas, números, notas ou tecnologias.
-- Fale do ${pessoal.nomeCurto} na terceira pessoa, em tom profissional e direto.
+- Responda SEMPRE em português do Brasil, em primeira pessoa ("eu"), em no máximo 4 frases.
+- Use apenas as informações do dossiê abaixo e as respostas já escritas. Se a resposta não estiver lá, diga com sinceridade que isso não aparece no portfólio e convide a pessoa a falar direto pelo e-mail ${pessoal.email}.
+- Nunca invente empregos, datas, números, notas, salário, nível de inglês ou tecnologias.
+- Escreva como uma pessoa escreveria à mão: frases curtas, sem travessão (—), sem ponto médio (·) e sem o símbolo ×. Use vírgula, ponto ou dois-pontos.
 
 DOSSIÊ:
 ${contexto()}`;

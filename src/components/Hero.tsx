@@ -177,7 +177,7 @@ export default function Hero() {
             {...entrada(0.36)}
             className="mt-10 font-mono text-xs text-muted"
           >
-            {pessoal.cargo} · {pessoal.empresa} — {pessoal.cidade}
+            {pessoal.cargo} na {pessoal.empresa}. Moro em {pessoal.cidade}.
           </motion.p>
         </div>
       </div>

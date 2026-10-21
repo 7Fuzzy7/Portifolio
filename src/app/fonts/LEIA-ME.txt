@@ -1,0 +1,13 @@
+﻿Fontes do site, guardadas aqui dentro do projeto (em vez de baixadas do Google a cada build).
+
+- TASAOrbiter-latin.woff2   fonte do texto (TASA Orbiter, variável 400 a 800, subconjunto latin)
+  Origem: Google Fonts. Licença: SIL Open Font License 1.1 (OFL-TASAOrbiter.txt)
+- GeistMono-latin.woff2     fonte dos rótulos pequenos (Geist Mono, variável 100 a 900, subconjunto latin)
+  Origem: Google Fonts. Licença: SIL Open Font License 1.1 (OFL-GeistMono.txt)
+
+Por que aqui? O next/font/google baixa as fontes da internet toda vez que compila. Se a rede
+falhar (offline, proxy da empresa), o site cai sem aviso para a fonte do sistema e o build pode
+quebrar. Com as fontes no projeto isso não depende mais de rede.
+
+O subconjunto "latin" cobre todo o português (acentos, cedilha, til, º). Para trocar de fonte,
+substitua os arquivos e ajuste o bloco no topo de ../layout.tsx.

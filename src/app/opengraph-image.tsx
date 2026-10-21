@@ -6,7 +6,7 @@ import { pessoal, hero } from "@/data/content";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = `${pessoal.nome} — ${pessoal.cargo}`;
+export const alt = `${pessoal.nome}, ${pessoal.cargo}`;
 
 /** Mistura duas cores hex (t = 0 → a, t = 1 → b). */
 function misturar(a: number[], b: number[], t: number) {
@@ -126,7 +126,7 @@ export default function OpenGraphImage() {
               fontSize: "32px",
             }}
           >
-            {`${pessoal.cargo} · ${pessoal.empresa}`}
+            {`${pessoal.cargo} na ${pessoal.empresa}`}
           </div>
         </div>
 

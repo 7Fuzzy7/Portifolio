@@ -42,7 +42,7 @@ Abra `src/data/content.ts`. Ele está dividido em blocos comentados:
 | `experiencia` | Linha do tempo, formação e certificações |
 | `contato` | Chamada, texto e a lista de links |
 | `navegacao` | Itens do menu |
-| `assistente` | Página `/chat`: sugestões e respostas prontas |
+| `assistente` | Página `/chat`: textos da tela (as perguntas e respostas ficam em `perguntas.ts`) |
 
 Algumas coisas que valem a pena ajustar depois:
 
@@ -60,7 +60,9 @@ Para tirar a foto do site, deixe `foto: ""` no bloco `pessoal`.
 
 Estão em `src/app/globals.css`, no bloco `@theme`. Mudou ali, mudou no site inteiro.
 O âmbar de destaque é `--color-accent` (o azul antigo era `#4d8dff`).
-As fontes (TASA Orbiter e Geist Mono) são carregadas em `src/app/layout.tsx`.
+As fontes (TASA Orbiter e Geist Mono) ficam guardadas **dentro do projeto**, em `src/app/fonts`, e são
+carregadas em `src/app/layout.tsx`. Assim o site não depende de baixar nada do Google na hora de rodar
+ou compilar (sem internet, ou com proxy de empresa, o jeito antigo caía na fonte do sistema ou quebrava o build).
 
 A cor da esfera de partículas **não** vem do CSS: ela está nos shaders de `src/lib/orb.ts`
 (variáveis `cDeep`, `cMid`, `cHot` e `cWhite`, valores de 0 a 1 em RGB).
@@ -156,19 +158,28 @@ Se um dia comprar um domínio: no painel do projeto → **Settings → Domains �
 
 ## 5. Assistente da página `/chat`
 
-Hoje ele roda no **modo offline**: as respostas estão prontas em `assistente.baseDeConhecimento`, dentro do `content.ts`. Não usa IA, não precisa de chave e **não custa nada**.
+Hoje ele roda no **modo offline**: é uma "entrevista já respondida", com cerca de 80 perguntas de recrutador e as respostas na primeira pessoa, em `src/data/perguntas.ts`. Não usa IA, não precisa de chave e **não custa nada**.
 
-Para adicionar uma resposta nova, copie um bloco e preencha:
+Para adicionar uma resposta nova, copie um bloco de `perguntas.ts` e preencha:
 
 ```ts
 {
-  palavras: ["ingles", "idioma", "fluente"],
-  resposta: "Ele estudou inglês no Kumon e na Wizard...",
+  id: "ingles",                 // nome único, usado nos "veja também"
+  categoria: "habilidades",     // tema em que aparece na tela
+  perguntas: ["Qual o seu nível de inglês?"],   // a 1ª vira botão
+  palavras: ["ingles", "idioma", "fluente"],    // gatilhos
+  resposta: "Leio documentação técnica em inglês. Para conversa, ...",
+  relacionadas: ["como-aprende"],
+  // generica: true  // visão geral: perde para uma resposta mais específica
 },
 ```
 
-As `palavras` são os gatilhos. Acento e maiúscula não importam — a busca normaliza tudo.
-Dica: use o **começo** da palavra (`"estud"` pega *estuda*, *estudou*, *estudante*).
+- `palavras`: acento e maiúscula não importam. Vale o **começo** da palavra (`"estud"` pega *estuda*, *estudou*). Frases ("o que voce faz") exigem as palavras em ordem.
+- `resposta`: aceita `{email}`, `{linkedin}`, `{github}`, `{cidade}`, `{empresa}`, `{cargo}`, `{nome}`.
+- `foraDoPortfolio`: lista de tecnologias que não aparecem no portfólio (AWS, Docker, Java...). Perguntou por uma delas, o assistente responde com honestidade em vez de inventar. Se você passar a usar uma, apague a linha e crie uma resposta.
+- Quando a pergunta é parecida mas não exata, ele responde com "Acho que é isto que você quer saber:". Quando nada combina, mostra os temas.
+
+**Antes de publicar, confira as respostas marcadas como pendentes:** salário, inglês, data de início, modelo de trabalho e histórias de situação difícil só devem ganhar números e fatos quando forem verdade.
 
 ### Ligar a IA de verdade (opcional, tem custo)
 

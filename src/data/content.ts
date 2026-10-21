@@ -5,7 +5,17 @@
  *  Nenhum componente precisa ser tocado.
  *
  *  Dica: depois de editar, salve e o site recarrega sozinho (npm run dev).
+ *
+ *  As perguntas e respostas do assistente (/chat) ficam em perguntas.ts.
  * ========================================================================== */
+import {
+  baseDeConhecimento,
+  categorias,
+  foraDoPortfolio,
+  type Resposta,
+} from "./perguntas";
+
+export type { Resposta, CategoriaPergunta } from "./perguntas";
 
 /* -----------------------------------------------------------------------------
  * 1. SITE — usado em SEO, Open Graph e sitemap
@@ -13,7 +23,7 @@
 export const site = {
   /** ⚠️ TROQUE depois do deploy pela URL real da Vercel (sem barra no final). */
   url: "https://pedro-almeida.vercel.app",
-  titulo: "Pedro Martins de Almeida — Suporte de TI, Visão Computacional e IoT",
+  titulo: "Pedro Martins de Almeida | Suporte de TI, Visão Computacional e IoT",
   /** Aparece no Google e no card de link do WhatsApp/LinkedIn. Até ~155 caracteres. */
   descricao:
     "Analista de Suporte de TI na SS3 Tecnologia e estudante de Engenharia da Computação na FIAP. Projetos em visão computacional, IoT e dados.",
@@ -74,15 +84,15 @@ export const sobre = {
   titulo: "Sobre",
   /** Cada string vira um parágrafo. */
   paragrafos: [
-    "Sou Analista de Suporte de TI na SS3 Tecnologia, onde cuido de análise de performance, manutenção de hardware, instalação e padronização de software e de todo o parque de impressão. É o tipo de rotina que ensina duas coisas que levo para qualquer projeto: diagnosticar rápido e explicar bem.",
-    "Cheguei na TI por um caminho um pouco mais longo. Comecei no técnico em Eletroeletrônica do SENAI Ricardo Lerner, passei um ano como Aspirante a Oficial no CPOR/SP cuidando de logística, compras e finanças, e trabalhei com atendimento ao público no Poupatempo e na Associação Fazenda Tamboré. Foram anos lidando com processo, prazo e gente — até a Engenharia da Computação na FIAP juntar tudo isso com a parte que eu mais gosto: fazer o sistema funcionar.",
-    "Hoje estou no 4º ano da FIAP e procuro um estágio em Engenharia da Computação onde eu possa somar o lado de infraestrutura ao que venho construindo em visão computacional, IoT e dados — de modelos YOLOv8 rodando embarcados a dashboards que transformam CSV bruto em decisão.",
+    "Sou analista de suporte de TI na SS3 Tecnologia desde março de 2026. No dia a dia analiso a performance das máquinas, faço manutenção de hardware, instalo e padronizo software e cuido do parque de impressão e do inventário dos ativos. Foi no suporte que aprendi a achar a causa de um problema rápido e a explicar a solução de um jeito que qualquer pessoa entenda.",
+    "Meu caminho até a TI foi meio longo. Comecei no técnico em Eletroeletrônica no SENAI Ricardo Lerner e depois passei um ano no CPOR/SP, como Aspirante a Oficial, cuidando de logística, compras e finanças. Também trabalhei no atendimento do Poupatempo e como controlador de acesso na Associação Fazenda Tamboré. Foram anos lidando com prazo curto e com gente de todo tipo. Na FIAP, no curso de Engenharia da Computação, juntei tudo isso com o que mais gosto de fazer: colocar um sistema para funcionar.",
+    "Hoje estou no 4º ano da FIAP e procuro um estágio em Engenharia da Computação. Quero somar a infraestrutura, que já faz parte da minha rotina, ao que venho construindo em visão computacional, IoT e dados. Isso vai de modelos YOLOv8 rodando embarcados a dashboards feitos a partir de CSV bruto.",
   ],
   /** Números/destaques ao lado do texto. Deixe a lista vazia [] para esconder. */
   destaques: [
-    { valor: "4º ano", legenda: "Engenharia da Computação · FIAP" },
-    { valor: "2026", legenda: "Analista de Suporte na SS3 Tecnologia" },
-    { valor: "5+", legenda: "Projetos entre visão computacional, IoT e dados" },
+    { valor: "4º ano", legenda: "Engenharia da Computação na FIAP" },
+    { valor: "Desde 2026", legenda: "Analista de Suporte na SS3 Tecnologia" },
+    { valor: "5+", legenda: "Projetos em visão computacional, IoT e dados" },
   ],
 };
 
@@ -175,21 +185,21 @@ export const projetos: { titulo: string; subtitulo: string; itens: Projeto[] } =
   itens: [
     {
       titulo: "AntVision",
-      contexto: "FIAP × John Deere Challenge",
+      contexto: "FIAP x John Deere Challenge",
       ano: "2026",
       problema:
         "Formigas cortadeiras derrubam a produtividade de lavouras inteiras, e o mapeamento dos formigueiros ainda é feito no olho, a pé, por quem conhece o talhão.",
       solucao:
         "Detecção por visão computacional rodando embarcada no dispositivo: dataset próprio anotado no Roboflow, modelo YOLOv8 treinado e convertido para Core ML, com a posição de cada detecção registrada por GPS.",
       resultado:
-        "Cada ocorrência vira um ponto no mapa de infestação, e o modelo roda offline — sem depender de sinal de internet no meio da lavoura.",
+        "Cada ocorrência vira um ponto no mapa de infestação, e o modelo roda offline, sem depender de sinal de internet no meio da lavoura.",
       stack: ["YOLOv8", "OpenCV", "Roboflow", "Core ML", "Swift", "GPS"],
       link: "",
       destaque: true,
     },
     {
       titulo: "Digital Twin de prensa pneumática",
-      contexto: "Desafio Festo · FIAP",
+      contexto: "Desafio Festo na FIAP",
       ano: "2025",
       problema:
         "Acompanhar o funcionamento de uma prensa pneumática exigia inspeção presencial, o que atrasa a percepção de qualquer desvio na operação.",
@@ -285,7 +295,7 @@ export const experiencia: {
         "Operação dos sistemas de controle de acesso e monitoramento, atendimento a moradores e registro de ocorrências.",
     },
     {
-      empresa: "Poupatempo — Detran",
+      empresa: "Poupatempo (Detran)",
       cargo: "Atendimento Multitarefas",
       de: "jan/2024",
       ate: "out/2024",
@@ -294,8 +304,8 @@ export const experiencia: {
         "Atendimento ao público em serviços do Detran, com uso diário dos sistemas do órgão e alto volume de solicitações.",
     },
     {
-      empresa: "CPOR/SP — Exército Brasileiro",
-      cargo: "Aspirante a Oficial · Logística, Compras e Finanças",
+      empresa: "CPOR/SP (Exército Brasileiro)",
+      cargo: "Aspirante a Oficial (Logística, Compras e Finanças)",
       de: "jan/2022",
       ate: "dez/2022",
       local: "São Paulo, SP",
@@ -307,19 +317,19 @@ export const experiencia: {
     {
       instituicao: "FIAP",
       curso: "Engenharia da Computação",
-      periodo: "2023 – 2027",
+      periodo: "2023 a 2027",
     },
     {
       instituicao: "SENAI Ricardo Lerner",
       curso: "Técnico em Eletroeletrônica",
-      periodo: "2020 – 2021",
+      periodo: "2020 a 2021",
     },
   ],
   certificacoes: [
-    "Excel Avançado · Alura",
-    "Power BI Desktop · Alura",
-    "Lógica de Programação e SQL · Alura",
-    "Gestão de Infraestrutura de TI · Alura",
+    "Excel Avançado (Alura)",
+    "Power BI Desktop (Alura)",
+    "Lógica de Programação e SQL (Alura)",
+    "Gestão de Infraestrutura de TI (Alura)",
   ],
 };
 
@@ -353,274 +363,36 @@ export const navegacao = [
 /* -----------------------------------------------------------------------------
  * 10. ASSISTENTE (/chat)
  *
- *  modo: "offline" → respostas prontas daqui de baixo. Não custa nada.
+ *  modo: "offline" → responde com as respostas prontas de perguntas.ts: uma
+ *                    "entrevista" que você já deixou respondida. Não custa nada.
  *  modo: "api"     → chama a rota /api/chat, que usa a API da Anthropic.
  *                    Exige a variável ANTHROPIC_API_KEY (veja o README).
  *
- *  Para adicionar uma resposta nova: copie um bloco de `baseDeConhecimento`,
- *  liste as palavras que devem acionar aquela resposta e escreva o texto.
- *  Acento e maiúscula não importam na busca.
+ *  Aqui ficam só os textos de moldura da página. As perguntas e as respostas
+ *  (o que realmente importa) ficam em src/data/perguntas.ts.
  * -------------------------------------------------------------------------- */
-export type Resposta = { palavras: string[]; resposta: string };
-
 export const assistente: {
   modo: "offline" | "api";
   titulo: string;
   subtitulo: string;
   saudacao: string;
   placeholder: string;
-  sugestoes: string[];
+  /** Resposta quando nada combina. Aceita {email}. */
   semResposta: string;
+  categorias: typeof categorias;
+  foraDoPortfolio: typeof foraDoPortfolio;
   baseDeConhecimento: Resposta[];
 } = {
   modo: "offline",
   titulo: "Assistente",
-  subtitulo: "Pergunte sobre a carreira, os projetos e a stack do Pedro.",
+  subtitulo:
+    "Tire dúvidas sobre a minha carreira, os meus projetos e as minhas habilidades.",
   saudacao:
-    "Oi! Eu respondo perguntas sobre a trajetória do Pedro — formação, experiência, projetos e tecnologias. Escolha uma sugestão abaixo ou escreva a sua pergunta.",
+    "Oi! Aqui você encontra as respostas que eu escrevi para as perguntas mais comuns de quem avalia o meu perfil. Escolha um tema abaixo ou escreva a sua pergunta.",
   placeholder: "Escreva sua pergunta…",
-  sugestoes: [
-    "Quem é o Pedro e o que ele faz hoje?",
-    "Quais projetos de visão computacional ele já fez?",
-    "Quais tecnologias ele domina?",
-    "Ele está disponível para estágio?",
-  ],
   semResposta:
-    "Ainda não tenho essa resposta pronta. Tente perguntar sobre formação, experiência, projetos, tecnologias ou disponibilidade para estágio — ou fale direto com o Pedro em pedro.live.martins@gmail.com.",
-  baseDeConhecimento: [
-    {
-      palavras: [
-        "quem e",
-        "quem é",
-        "quem eh",
-        "me fale sobre ele",
-        "fale sobre o pedro",
-        "apresenta",
-        "resumo",
-        "faz hoje",
-        "o que faz",
-        "perfil",
-      ],
-      resposta:
-        "Pedro Martins de Almeida é Analista de Suporte de TI na SS3 Tecnologia desde março de 2026 e está no 4º ano de Engenharia da Computação na FIAP (2023–2027). O posicionamento dele une duas frentes: infraestrutura e suporte de um lado, visão computacional, IoT e dados do outro. Mora em Cotia, SP.",
-    },
-    {
-      palavras: [
-        "trabalho atual",
-        "trabalha",
-        "ss3",
-        "suporte",
-        "emprego",
-        "atualmente",
-        "cargo",
-        "analista",
-      ],
-      resposta:
-        "Na SS3 Tecnologia ele cuida de análise de performance de máquinas, manutenção de hardware, instalação e padronização de software, suporte ao parque de impressão e controle de inventário dos ativos. É o trabalho que treinou nele o diagnóstico rápido e a comunicação clara com o usuário.",
-    },
-    {
-      palavras: [
-        "formacao",
-        "formação",
-        "faculdade",
-        "fiap",
-        "estud",
-        "curso",
-        "senai",
-        "tecnico",
-        "técnico",
-        "eletroeletronica",
-        "graduacao",
-        "graduação",
-        "universidade",
-        "certifica",
-      ],
-      resposta:
-        "Ele cursa Engenharia da Computação na FIAP (2023–2027, 4º ano) e é Técnico em Eletroeletrônica pelo SENAI Ricardo Lerner (2020–2021). Complementou com certificações da Alura em Excel Avançado, Power BI Desktop, Lógica de Programação e SQL, e Gestão de Infraestrutura de TI.",
-    },
-    {
-      palavras: [
-        "projetos",
-        "portfolio",
-        "portfólio",
-        "ja fez",
-        "já fez",
-        "construiu",
-        "desenvolveu",
-      ],
-      resposta:
-        "São cinco projetos no portfólio: AntVision (detecção de formigas cortadeiras com YOLOv8, para o FIAP × John Deere Challenge 2026), um Digital Twin de prensa pneumática com ESP32-CAM e Grafana, um dashboard de finanças pessoais em Streamlit com CSV real de banco, um app React Native de risco de deslizamento e um pipeline de Big Data com Sqoop, Hadoop e Spark.",
-    },
-    {
-      palavras: [
-        "antvision",
-        "formiga",
-        "visao computacional",
-        "visão computacional",
-        "yolo",
-        "opencv",
-        "roboflow",
-        "john deere",
-        "lavoura",
-        "agro",
-        "deteccao",
-        "detecção",
-      ],
-      resposta:
-        "O AntVision foi feito para o FIAP × John Deere Challenge 2026. O problema: formigas cortadeiras derrubam a produtividade da lavoura e o mapeamento dos formigueiros ainda é feito a pé, no olho. A solução foi um modelo YOLOv8 treinado sobre um dataset próprio anotado no Roboflow, convertido para Core ML e rodando embarcado no dispositivo, com a posição de cada detecção registrada por GPS. Como roda offline, funciona no meio do talhão sem sinal de internet.",
-    },
-    {
-      palavras: [
-        "digital twin",
-        "gemeo digital",
-        "gêmeo digital",
-        "festo",
-        "prensa",
-        "iot",
-        "esp32",
-        "mqtt",
-        "node-red",
-        "grafana",
-        "sensor",
-        "industria",
-        "indústria",
-      ],
-      resposta:
-        "O Digital Twin da prensa pneumática nasceu do desafio da Festo na FIAP. Sensores físicos e uma ESP32-CAM publicam telemetria via MQTT, o Node-RED trata os dados e o Grafana mostra o estado da prensa em tempo real, com histórico para identificar desvios na operação.",
-    },
-    {
-      palavras: [
-        "dashboard",
-        "streamlit",
-        "financas",
-        "finanças",
-        "gastos",
-        "banco",
-        "csv",
-        "pandas",
-      ],
-      resposta:
-        "O dashboard de finanças pessoais é um projeto em Streamlit que lê o CSV real exportado do banco, limpa e categoriza os lançamentos com Pandas e mostra a evolução dos gastos por categoria e por período — respondendo a pergunta que o extrato bruto não responde.",
-    },
-    {
-      palavras: [
-        "react native",
-        "deslizamento",
-        "app",
-        "aplicativo",
-        "mobile",
-        "expo",
-        "openweather",
-        "chuva",
-        "encosta",
-      ],
-      resposta:
-        "É um app em React Native com Expo que cruza os dados de chuva da API OpenWeather com a localização do usuário para classificar o risco de deslizamento em área de encosta, guardando o histórico local com AsyncStorage para continuar útil mesmo sem conexão.",
-    },
-    {
-      palavras: [
-        "big data",
-        "spark",
-        "hadoop",
-        "sqoop",
-        "hdfs",
-        "pipeline",
-        "data lake",
-        "oracle",
-      ],
-      resposta:
-        "No projeto de Big Data ele fez a ingestão de dados de um banco Oracle para o HDFS usando Sqoop e o processamento distribuído com Hadoop e Spark, liberando as consultas analíticas do banco transacional de origem.",
-    },
-    {
-      palavras: [
-        "tecnologias",
-        "stack",
-        "habilidades",
-        "linguagens",
-        "domina",
-        "ferramentas",
-        "python",
-        "javascript",
-        "sql",
-        "skills",
-      ],
-      resposta:
-        "Linguagens: Python, JavaScript, HTML, CSS e SQL. IoT e visão computacional: Arduino, ESP32/ESP32-CAM, YOLOv8, OpenCV, Roboflow, MQTT e Node-RED. Dados e BI: Power BI, Excel Avançado, Pandas, Streamlit, Grafana e Hadoop/Spark. Infra e suporte: manutenção de hardware, análise de performance, padronização de software, suporte a impressão e inventário de ativos.",
-    },
-    {
-      palavras: [
-        "power bi",
-        "bi",
-        "dados",
-        "analise de dados",
-        "análise de dados",
-        "excel",
-      ],
-      resposta:
-        "Na parte de dados ele trabalha com Power BI e Excel Avançado (ambos com certificação Alura), Pandas e Streamlit para análise em Python, Grafana para telemetria em tempo real e Hadoop/Spark no contexto de Big Data.",
-    },
-    {
-      palavras: [
-        "estagio",
-        "estágio",
-        "disponivel",
-        "disponível",
-        "vaga",
-        "contratar",
-        "oportunidade",
-        "procurando",
-        "busca",
-        "trabalhar",
-      ],
-      resposta:
-        "Sim — ele está aberto a estágio em Engenharia da Computação, de preferência em algo que combine infraestrutura com visão computacional, IoT ou dados. O contato mais rápido é pelo e-mail pedro.live.martins@gmail.com ou pelo LinkedIn: linkedin.com/in/pedroalmeida09.",
-    },
-    {
-      palavras: [
-        "contato",
-        "email",
-        "e-mail",
-        "linkedin",
-        "github",
-        "falar",
-        "chamar",
-        "telefone",
-        "onde mora",
-        "cidade",
-      ],
-      resposta:
-        "E-mail: pedro.live.martins@gmail.com · LinkedIn: linkedin.com/in/pedroalmeida09 · GitHub: github.com/7Fuzzy7 · Cotia, SP.",
-    },
-    {
-      palavras: [
-        "transicao",
-        "transição",
-        "carreira",
-        "antes",
-        "experiencia anterior",
-        "experiência anterior",
-        "poupatempo",
-        "exercito",
-        "exército",
-        "cpor",
-        "tambore",
-        "tamboré",
-        "trajetoria",
-        "trajetória",
-      ],
-      resposta:
-        "A trajetória dele não começou na TI. Foi Aspirante a Oficial no CPOR/SP em 2022, cuidando de logística, compras e finanças; atuou no atendimento do Poupatempo (Detran) em 2024; e foi Controlador de Acesso na Associação Fazenda Tamboré até março de 2026, quando entrou na SS3 Tecnologia. São anos de processo, prazo e contato com o público que hoje aparecem na forma como ele conduz um atendimento técnico.",
-    },
-    {
-      palavras: [
-        "diferencial",
-        "por que contratar",
-        "ponto forte",
-        "se destaca",
-        "vale a pena",
-      ],
-      resposta:
-        "O diferencial é a combinação: ele entende o hardware e a infraestrutura por baixo (formação em eletroeletrônica + rotina de suporte) e sabe construir a camada de software em cima — de um modelo YOLOv8 embarcado a um dashboard de telemetria. Some a isso anos de atendimento ao público, que aparecem na clareza com que ele explica um problema técnico.",
-    },
-  ],
+    "Essa eu ainda não tenho pronta. Escolha um dos temas abaixo ou fale direto comigo em {email}.",
+  categorias,
+  foraDoPortfolio,
+  baseDeConhecimento,
 };
